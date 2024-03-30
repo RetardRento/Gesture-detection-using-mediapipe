@@ -10,4 +10,5 @@ This is a project that showcases how you can detect the gestures of a hand using
 ## How to run
 If you want to run this locally on your machine follow the instruction 
 >> download the git repo to your local machine
->> python app.py  (run this in terminal)
+
+>> python app.py (run this on the terminal)
