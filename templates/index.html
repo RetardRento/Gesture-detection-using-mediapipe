@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gesture Detection</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+      body {
+        font-family: "Helvetica Neue", sans-serif;
+        background: linear-gradient(to right, #45a3e5, #fc7272);
+        color: #fff;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .container {
+        text-align: center;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        background-color: rgba(41, 40, 40, 0.8);
+      }
+
+      h1 {
+        font-family: "Impact", sans-serif;
+        font-size: 48px;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 18px;
+        margin-bottom: 30px;
+      }
+
+      .video {
+        max-width: 100%;
+        height: auto;
+        border: 5px solid #444;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+        display: none; /* initially hidden */
+      }
+
+      .button {
+        width: 200px;
+        height: 50px;
+        border: none;
+        border-radius: 25px;
+        background: #0065b3;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .button:hover {
+        background: #004271;
+      }
+
+      .button:active {
+        transform: scale(0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gesture Detection</h1>
+      <p>
+        This is a web app that uses your webcam to detect hand gestures using
+        Python, OpenCV, and MediaPipe.
+      </p>
+      <img
+        class="video"
+        id="video"
+        src="{{ url_for('video_feed') }}"
+        alt="Video Feed" />
+      <button class="button" id="button">Start Detection</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const button = document.getElementById("button");
+        const video = document.getElementById("video");
+
+        function getWebcam() {
+          video.src = "{{ url_for('video_feed') }}";
+        }
+
+        function updateVideo() {
+          video.src = "{{ url_for('video_feed') }}";
+          setTimeout(updateVideo, 100);
+        }
+
+        button.addEventListener("click", function () {
+          getWebcam();
+          video.style.display = "block"; // Show the video feed
+          button.style.display = "none"; // Hide the button after clicking
+          updateVideo();
+        });
+      });
+    </script>
+  </body>
+</html>

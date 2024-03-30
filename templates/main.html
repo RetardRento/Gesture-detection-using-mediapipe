@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gesture Detection</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #00c6ff, #0072ff);
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h1 {
+        color: white;
+        font-size: 48px;
+        text-align: center;
+        margin-top: 50px;
+        margin-bottom: 20px;
+      }
+
+      p {
+        color: white;
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .video {
+        width: 600px;
+        height: 400px;
+        border: 5px solid white;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+      }
+
+      .button {
+        width: 200px;
+        height: 50px;
+        border: none;
+        border-radius: 25px;
+        background: white;
+        color: #0072ff;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .button:hover {
+        transform: scale(1.1);
+      }
+
+      .button:active {
+        transform: scale(0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gesture Detection</h1>
+      <p>
+        This is a web app that uses your webcam to detect hand gestures using
+        Python, OpenCV, and MediaPipe.
+      </p>
+      <video class="video" id="video" autoplay></video>
+      <button class="button" id="button">Start Detection</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+      const video = document.getElementById("video");
+      const button = document.getElementById("button");
+
+      const socket = io.connect("http://localhost:5000");
+
+      socket.on("update_frame", function (data) {
+        const decodedFrame = atob(data.frame);
+        const uint8Array = new Uint8Array(decodedFrame.length);
+        for (let i = 0; i < decodedFrame.length; i++) {
+          uint8Array[i] = decodedFrame.charCodeAt(i);
+        }
+        const blob = new Blob([uint8Array], { type: "image/jpeg" });
+        const imageUrl = URL.createObjectURL(blob);
+
+        video.src = imageUrl;
+
+        console.log(data.landmarks);
+      });
+
+      function getWebcam() {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices
+            .getUserMedia({ video: true })
+            .then(function (stream) {
+              video.srcObject = stream;
+              video.play();
+            })
+            .catch(function (err) {
+              console.error(err);
+            });
+        }
+      }
+
+      button.addEventListener("click", function () {
+        socket.emit("start_detection", {});
+      });
+
+      window.addEventListener("load", getWebcam);
+    </script>
+  </body>
+</html>
+```
